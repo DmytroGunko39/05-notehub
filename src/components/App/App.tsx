@@ -7,18 +7,25 @@ import NoteForm from "../NoteForm/NoteForm.tsx";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchNotes } from "../../services/noteService.ts";
+import { useDebouncedCallback } from "use-debounce";
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState(1);
   const perPage = 12;
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
+  const [searchTopic, setSearchTopic] = useState("");
+
+  const updateSearchTopic = useDebouncedCallback(
+    (newSearchTopic: string) => setSearchTopic(newSearchTopic),
+    500
+  );
+
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["notes", currentPage],
-    queryFn: () => fetchNotes(currentPage, perPage),
+    queryKey: ["notes", searchTopic, currentPage],
+    queryFn: () => fetchNotes(currentPage, perPage, searchTopic),
   });
 
   if (isLoading) return <p>Loading...</p>;
@@ -30,7 +37,7 @@ export default function App() {
   return (
     <div className={css.app}>
       <header className={css.toolbar}>
-        <SearchBox />
+        <SearchBox value={searchTopic} onSearch={updateSearchTopic} />
         {totalPages > 1 && (
           <Pagination
             page={currentPage}
@@ -42,10 +49,10 @@ export default function App() {
           Create note +
         </button>
       </header>
-      {notes.length > 0 && <NoteList notes={notes} />}
+      {data && !isLoading && <NoteList notes={notes} />}
       {isModalOpen && (
         <Modal onClose={closeModal}>
-          <NoteForm />
+          <NoteForm onCloseModal={closeModal} />
         </Modal>
       )}
     </div>

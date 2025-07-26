@@ -1,4 +1,4 @@
-type NoteTag = "Work" | "Personal" | "Meeting" | "Shopping" | "Todo";
+export type NoteTag = "Work" | "Personal" | "Meeting" | "Shopping" | "Todo";
 
 export interface Note {
   id: number;
@@ -10,4 +10,10 @@ export interface Note {
 export interface NotesResponse {
   notes: Note[];
   totalPages: number;
+}
+
+export interface NewNotesData {
+  content: string;
+  tag: NoteTag;
+  title: string;
 }
