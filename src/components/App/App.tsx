@@ -7,7 +7,7 @@ import NoteForm from "../NoteForm/NoteForm.tsx";
 import Spinner from "../Spiner/Spiner.tsx";
 import ErrorMessage from "../ErrorMessage/ErrorMessage.tsx";
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { fetchNotes } from "../../services/noteService.ts";
 import { useDebouncedCallback } from "use-debounce";
 
@@ -28,6 +28,7 @@ export default function App() {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["notes", searchTopic, currentPage],
     queryFn: () => fetchNotes(currentPage, perPage, searchTopic),
+    placeholderData: keepPreviousData,
   });
 
   if (isLoading) return <Spinner />;
