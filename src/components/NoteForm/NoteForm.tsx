@@ -2,7 +2,7 @@ import css from "./NoteForm.module.css";
 import { createNote } from "../../services/noteService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { NewNotesData, NoteTag } from "../../types/note";
-import { Formik, Form, Field } from "formik";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import type { FormikHelpers } from "formik";
 import * as Yup from "yup";
 
@@ -67,7 +67,9 @@ export default function NoteForm({ onCloseModal }: NoteFormProps) {
         <div className={css.formGroup}>
           <label htmlFor="title">Title</label>
           <Field id="title" type="text" name="title" className={css.input} />
-          <span data-name="title" className={css.error} />
+          <ErrorMessage name="title">
+            {(msg) => <span className={css.error}>{msg}</span>}
+          </ErrorMessage>
         </div>
 
         <div className={css.formGroup}>
@@ -79,7 +81,9 @@ export default function NoteForm({ onCloseModal }: NoteFormProps) {
             rows={8}
             className={css.textarea}
           ></Field>
-          <span data-name="content" className={css.error} />
+          <ErrorMessage name="content">
+            {(msg) => <span className={css.error}>{msg}</span>}
+          </ErrorMessage>
         </div>
 
         <div className={css.formGroup}>
@@ -92,7 +96,9 @@ export default function NoteForm({ onCloseModal }: NoteFormProps) {
             <option value="Meeting">Meeting</option>
             <option value="Shopping">Shopping</option>
           </Field>
-          <span data-name="tag" className={css.error} />
+          <ErrorMessage name="tag">
+            {(msg) => <span className={css.error}>{msg}</span>}
+          </ErrorMessage>
         </div>
 
         <div className={css.actions}>

@@ -4,6 +4,8 @@ import Pagination from "../Pagination/Pagination.tsx";
 import SearchBox from "../SearchBox/SearchBox.tsx";
 import Modal from "../Modal/Modal";
 import NoteForm from "../NoteForm/NoteForm.tsx";
+import Spinner from "../Spiner/Spiner.tsx";
+import ErrorMessage from "../ErrorMessage/ErrorMessage.tsx";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchNotes } from "../../services/noteService.ts";
@@ -18,18 +20,18 @@ export default function App() {
 
   const [searchTopic, setSearchTopic] = useState("");
 
-  const updateSearchTopic = useDebouncedCallback(
-    (newSearchTopic: string) => setSearchTopic(newSearchTopic),
-    500
-  );
+  const updateSearchTopic = useDebouncedCallback((newSearchTopic: string) => {
+    setSearchTopic(newSearchTopic);
+    setCurrentPage(1);
+  }, 500);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["notes", searchTopic, currentPage],
     queryFn: () => fetchNotes(currentPage, perPage, searchTopic),
   });
 
-  if (isLoading) return <p>Loading...</p>;
-  if (isError) return <p>Failed to load notes.</p>;
+  if (isLoading) return <Spinner />;
+  if (isError) return <ErrorMessage message="Failed to load notes." />;
 
   const notes = data?.notes || [];
   const totalPages = data?.totalPages || 1;
